@@ -59,8 +59,8 @@ class Hand:
 
 class Game:
     def __init__(self):
-        # playing = True
-        # while playing:
+        playing = True
+        while playing:
             self.deck = Deck()
             self.deck.shuffle()
 
@@ -88,6 +88,31 @@ class Game:
                 choice = input("Would you like to [H]it or [S]tick?\n").lower()
                 while choice not in ["h", "s", "hit", "stick"]:
                     choice = input("Please choose whether to hit or stick.\n").lower()
+                if choice in ["h", "hit"]:
+                    self.player_hand.add_card(self.deck.deal())
+                    self.player_hand.display()
+                    if self.player_is_over():
+                        print("You've gone over, you lose!")
+                        game_over = True
+                else:
+                    print("Final results:")
+                    print(f"Your hand: {self.player_hand.get_value()}")
+                    print(f"Dealer's hand: {self.dealer_hand.get_value()}")
+                    if self.player_hand.get_value() > self.dealer_hand.get_value():
+                        print("You win!")
+                        game_over = True
+                    else:
+                        print("Dealer wins!")
+                        game_over = True
+            
+            play_again = input("Play again? [Y/N]\n").lower()
+            while play_again not in ["y", "yes", "n", "no"]:
+                play_again = input("Please enter Y / N\n")
+            if play_again in ["n", "no"]:
+                print("Thanks for playing!")
+                playing = False
+            else:
+                game_over = False
     
     def check_for_bj(self):
         player = False
@@ -106,13 +131,9 @@ class Game:
         elif dealer_has_bj:
             print("Dealer has blackjack! Dealer wins!")
 
-if __name__ == "__main__":
-    # deck = Deck()
-    # for card in deck.cards:
-    #     print(card.get_card_name())
-    # deck.shuffle()
-    # for card in deck.cards:
-    #     print(card.get_card_name())
+    def player_is_over(self):
+        return self.player_hand.get_value() > 21
 
+if __name__ == "__main__":
     game = Game()
     
