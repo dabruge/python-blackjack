@@ -77,6 +77,35 @@ class Game:
             print("Dealer's hand:")
             self.dealer_hand.display()
 
+            game_over = False
+
+            while not game_over:
+                player_has_bj, dealer_has_bj = self.check_for_bj()
+                if player_has_bj or dealer_has_bj:
+                    game_over = True
+                    self.show_bj_results(player_has_bj, dealer_has_bj)
+                    continue
+                choice = input("Would you like to [H]it or [S]tick?\n").lower()
+                while choice not in ["h", "s", "hit", "stick"]:
+                    choice = input("Please choose whether to hit or stick.\n").lower()
+    
+    def check_for_bj(self):
+        player = False
+        dealer = False
+        if self.player_hand.get_value() == 21:
+            player = True
+        if self.dealer_hand.get_value() == 21:
+            dealer = True
+        return player, dealer
+    
+    def show_bj_results(self, player_has_bj, dealer_has_bj):
+        if player_has_bj and dealer_has_bj:
+            print("Both players have blackjack! Draw!")
+        elif player_has_bj:
+            print("You have blackjack! You win!")
+        elif dealer_has_bj:
+            print("Dealer has blackjack! Dealer wins!")
+
 if __name__ == "__main__":
     # deck = Deck()
     # for card in deck.cards:
