@@ -51,17 +51,39 @@ class Hand:
     def display(self):
         if self.dealer:
             print("Hidden")
-            print(self.cards[1])
+            print(self.cards[1].get_card_name())
         else:
             for card in self.cards:
-                print(card)
+                print(card.get_card_name())
             print("Value: ", self.get_value())
 
+class Game:
+    def __init__(self):
+        # playing = True
+        # while playing:
+            self.deck = Deck()
+            self.deck.shuffle()
+
+            self.player_hand = Hand()
+            self.dealer_hand = Hand(dealer=True)
+
+            for i in range(2):
+                self.player_hand.add_card(self.deck.deal())
+                self.dealer_hand.add_card(self.deck.deal())
+            
+            print("Player's hand:")
+            self.player_hand.display()
+            print()
+            print("Dealer's hand:")
+            self.dealer_hand.display()
+
 if __name__ == "__main__":
-    deck = Deck()
-    for card in deck.cards:
-        print(card.get_card_name())
-    deck.shuffle()
-    for card in deck.cards:
-        print(card.get_card_name())
+    # deck = Deck()
+    # for card in deck.cards:
+    #     print(card.get_card_name())
+    # deck.shuffle()
+    # for card in deck.cards:
+    #     print(card.get_card_name())
+
+    game = Game()
     
