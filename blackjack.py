@@ -50,9 +50,11 @@ class Hand:
     
     def display(self):
         if self.dealer:
+            print("\nDealer's hand:")
             print("Hidden")
             print(self.cards[1].get_card_name())
         else:
+            print("\nPlayer's hand:")
             for card in self.cards:
                 print(card.get_card_name())
             print("Value: ", self.get_value())
@@ -70,11 +72,8 @@ class Game:
             for i in range(2):
                 self.player_hand.add_card(self.deck.deal())
                 self.dealer_hand.add_card(self.deck.deal())
-            
-            print("Player's hand:")
+            print("\n========== Welcome to Blackjack! ==========")
             self.player_hand.display()
-            print()
-            print("Dealer's hand:")
             self.dealer_hand.display()
 
             game_over = False
@@ -85,31 +84,31 @@ class Game:
                     game_over = True
                     self.show_bj_results(player_has_bj, dealer_has_bj)
                     continue
-                choice = input("Would you like to [H]it or [S]tick?\n").lower()
+                choice = input("\nWould you like to [H]it or [S]tick?\n").lower()
                 while choice not in ["h", "s", "hit", "stick"]:
                     choice = input("Please choose whether to hit or stick.\n").lower()
                 if choice in ["h", "hit"]:
                     self.player_hand.add_card(self.deck.deal())
                     self.player_hand.display()
                     if self.player_is_over():
-                        print("You've gone over, you lose!")
+                        print("\nYou've gone over, you lose!")
                         game_over = True
                 else:
-                    print("Final results:")
-                    print(f"Your hand: {self.player_hand.get_value()}")
+                    print("\nFinal results:")
+                    print(f"\nYour hand: {self.player_hand.get_value()}")
                     print(f"Dealer's hand: {self.dealer_hand.get_value()}")
                     if self.player_hand.get_value() > self.dealer_hand.get_value():
-                        print("You win!")
+                        print("\nYou win!")
                         game_over = True
                     else:
-                        print("Dealer wins!")
+                        print("\nDealer wins!")
                         game_over = True
             
-            play_again = input("Play again? [Y/N]\n").lower()
+            play_again = input("\nPlay again? [Y/N]\n").lower()
             while play_again not in ["y", "yes", "n", "no"]:
                 play_again = input("Please enter Y / N\n")
             if play_again in ["n", "no"]:
-                print("Thanks for playing!")
+                print("\nThanks for playing!")
                 playing = False
             else:
                 game_over = False
