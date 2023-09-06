@@ -2,15 +2,19 @@ import os
 import random
 import tkinter as tk
 
-assets_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'assets/'))
+assets_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'python-blackjack/assets/'))
 
 class Card:
     def __init__(self, suit, value):
         self.suit = suit
         self.value = value
+        self.img = tk.PhotoImage(file=assets_folder + '/Classic/' + self.suit[0].lower() + self.value + ".png")
     
     def get_card_name(self):
         return f"{self.value} of {self.suit}"
+
+    def get_file(self):
+        return self.img
     
     @classmethod
     def get_back_file(cls):
@@ -146,6 +150,84 @@ class GameScreen(tk.Tk):
         self.DEALER_CARD_HEIGHT = 100
         self.PLAYER_SCORE_TEXT_COORDS = (400, 450)
         self.WINNER_TEXT_COORDS = (400, 250)
+
+        self.game_state = GameState()
+        self.game_screen = tk.Canvas(self, bg="white", width=800, height=500)
+
+        self.bottom_frame = tk.Frame(self, width=800, height=140, bg="red")
+        self.bottom_frame.pack_propagate(0) # forces the frame to be the size specified in tk.Frame()
+
+        self.hit_button = tk.Button(self.bottom_frame, text="Hit", width=25, command=self.hit)
+        self.stick_button = tk.Button(self.bottom_frame, text="Stick", width=25, command=self.stick)
+        self.play_again_button = tk.Button(self.bottom_frame, text="Play Again", width=25, command=self.play_again)
+        self.quit_button = tk.Button(self.bottom_frame, text="Quit", width=25, command=self.destroy)
+
+        self.hit_button.pack(side=tk.LEFT, padx=(100, 200))
+        self.stick_button.pack(side=tk.LEFT)
+
+        self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        self.game_screen.pack(side=tk.LEFT, anchor=tk.N)
+
+        self.display_table()
+
+    def display_table(self, hide_dealer=True, table_state=None):
+        if not table_state:
+            table_state = self.game_state.get_table_state()
+        player_card_images = [card.get_file() for card in table_state['player_cards']]
+        dealer_card_images = [card.get_file() for card in table_state['dealer_cards']]
+        if hide_dealer and not table_state['blackjack']:
+            dealer_card_images[0] = Card.get_back_file()
+        
+        self.game_screen.delete("all")
+        self.tabletop_image = tk.PhotoImage(file=assets_folder + "/tabletop.png")
+        self.game_screen.create_image((400, 250), image=self.tabletop_image)
+
+        for card_number, card_image in enumerate(player_card_images):
+            self.game_screen.create_image(
+                (self.CARD_ORIGINAL_POSITION + self.CARD_WIDTH_OFFSET * card_number, self.PLAYER_CARD_HEIGHT), image=card_image
+            )
+        
+        for card_number, card_image in enumerate(dealer_card_images):
+            self.game_screen.create_image(
+                (self.CARD_ORIGINAL_POSITION + self.CARD_WIDTH_OFFSET * card_number, self.DEALER_CARD_HEIGHT), image=card_image
+            )
+        
+        self.game_screen.create_text(self.PLAYER_SCORE_TEXT_COORDS, text=self.game_state.player_score_as_text(), font=(None, 20))
+
+        if table_state['has_winner']:
+            if table_state['has_winner'] == 'player':
+                self.game_screen.create_text(self.WINNER_TEXT_COORDS, text="YOU WIN!", font=(None, 50))
+            elif table_state['has_winner'] == '':
+                self.game_screen.create_text(self.WINNER_TEXT_COORDS, text="TIE!", font=(None, 50))
+            else:
+                self.game_screen.create_text(self.WINNER_TEXT_COORDS, text="DEALER WINS!", font=(None, 50))
+
+            self.show_play_again_options()
+
+    def show_play_again_options(self):
+        self.hit_button.pack_forget()
+        self.stick_button.pack_forget()
+        self.play_again_button.pack(side=tk.LEFT, padx=(100, 200))
+        self.quit_button.pack(side=tk.LEFT)
+
+    def hit(self):
+        self.game_state.hit()
+        self.display_table()
+    
+    def stick(self):
+        table_state = self.game_state.calculate_final_state()
+        self.display_table(False, table_state)
+    
+    def play_again(self):
+        self.show_gameplay_buttons()
+        self.game_state = GameState()
+        self.display_table()
+    
+    def show_gameplay_buttons(self):
+        self.play_again_button.pack_forget()
+        self.quit_button.pack_forget()
+        self.hit_button.pack(side=tk.LEFT, padx=(100, 200))
+        self.stick_button.pack(side=tk.LEFT)
     
 
 if __name__ == "__main__":
