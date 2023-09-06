@@ -74,7 +74,7 @@ class GameState:
     def player_is_over(self):
         return self.player_hand.get_value() > 21
     
-    def bj_occurred(self):
+    def bj_occurred(self): #someone_has_blackjack
         player = False
         dealer = False
         if self.player_hand.get_value() == 21:
@@ -99,3 +99,48 @@ class GameState:
             self.has_winner = 'dealer'
 
         return self.has_winner
+    
+    def get_table_state(self):
+        bj = False
+        winner = self.has_winner
+        if not winner:
+            winner = self.bj_occurred()
+            if winner:
+                bj = True
+        table_state = {
+            "player_cards": self.player_hand.cards,
+            "dealer_cards": self.dealer_hand.cards,
+            "has_winner": winner,
+            "blackjack": bj
+        }
+        return table_state
+    
+    def calculate_final_state(self):
+        player_hand_value = self.player_hand.get_value()
+        dealer_hand_value = self.dealer_hand.get_value()
+        if player_hand_value > dealer_hand_value:
+            winner = "player"
+        else:
+            winner = "dealer"
+        
+        table_state = {
+            "player_cards": self.player_hand.cards,
+            "dealer_cards": self.dealer_hand.cards,
+            "has_winner": winner
+        }
+        return table_state
+    
+    def player_score_as_text(self):
+        return f"Score: {str(self.player_hand.get_value())}"
+    
+class GameScreen(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Blackjack")
+        self.geometry("800x640")
+        self.resizable(False, False)
+    
+
+if __name__ == "__main__":
+    game = GameScreen()
+    game.mainloop()
