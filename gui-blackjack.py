@@ -139,6 +139,13 @@ class GameScreen(tk.Tk):
         self.title("Blackjack")
         self.geometry("800x640")
         self.resizable(False, False)
+
+        self.CARD_ORIGINAL_POSITION = 100
+        self.CARD_WIDTH_OFFSET = 100
+        self.PLAYER_CARD_HEIGHT = 300
+        self.DEALER_CARD_HEIGHT = 100
+        self.PLAYER_SCORE_TEXT_COORDS = (400, 450)
+        self.WINNER_TEXT_COORDS = (400, 250)
     
 
 if __name__ == "__main__":
