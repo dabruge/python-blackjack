@@ -17,3 +17,4 @@ class SoundBoard:
             return pygame.mixer.Sound(file_location)
         else:
             raise Exception(f"File {file_location} could not be found")
+    
